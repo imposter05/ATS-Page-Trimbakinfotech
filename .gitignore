@@ -1,0 +1,10 @@
+# Environment variables — NEVER commit real keys
+.env
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db

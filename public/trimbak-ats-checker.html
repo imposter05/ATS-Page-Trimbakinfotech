@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resume ATS Check · Trimbaks InfoTech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1D4ED8;--navy:#0E1B40;--navy-soft:#33406A;
+    --bar:#0A1330;--bg:#F2F6FF;--surface:#FFFFFF;--chip:#EEF1FD;--line:#E5EAF6;--muted:#5C6478;
+    --good:#16A34A;--mid:#F59E0B;--low:#EF4444;
+    --r:20px;--r-sm:12px;--shadow:0 18px 40px -24px rgba(14,27,64,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--navy);
+    background:radial-gradient(900px 500px at 80% -10%,#E5ECFF 0%,transparent 60%),var(--bg);
+    min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.brand-name,.score-num{font-family:'Poppins',system-ui,sans-serif}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* top bar */
+  .topbar{background:var(--bar);color:#C7D0EA;font-size:12.5px}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:40px}
+  .topbar strong{color:#fff;font-weight:600}
+  .topbar .dot{opacity:.4;margin:0 10px}
+  .socials{display:flex;gap:10px}
+  .socials span{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:11px}
+
+  /* nav */
+  nav.bar{position:sticky;top:14px;z-index:20;margin-top:18px}
+  .navcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;padding:12px 18px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+    display:grid;place-items:center;color:#fff;font-weight:800}
+  .brand-name{font-weight:800;letter-spacing:.5px;font-size:18px}
+  .navlinks{display:flex;gap:26px;font-size:14.5px;font-weight:500;color:#39435F}
+  .navlinks a.active{color:var(--blue);font-weight:600}
+  .nav-cta{background:var(--blue);color:#fff;padding:10px 18px;border-radius:11px;font-weight:600;font-size:14px}
+  @media(max-width:820px){.navlinks{display:none}}
+
+  /* hero */
+  header.hero{padding:54px 0 26px}
+  .eyebrow{color:var(--blue);font-weight:700;letter-spacing:1.5px;font-size:12.5px;text-transform:uppercase;margin-bottom:14px}
+  header.hero h1{font-size:clamp(30px,5vw,46px);font-weight:800;line-height:1.08;letter-spacing:-.5px;max-width:18ch}
+  header.hero p{color:var(--muted);font-size:16.5px;max-width:60ch;margin-top:16px}
+
+  /* tool card */
+  .tool{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:26px;margin:8px 0 40px}
+  .tool h2{font-size:19px;font-weight:700;margin-bottom:4px}
+  .tool .sub{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  label.fl{display:block;font-size:13px;font-weight:600;margin-bottom:7px;color:#2A3552}
+  textarea,input,select{width:100%;border:1px solid var(--line);border-radius:var(--r-sm);
+    padding:12px 13px;font:inherit;font-size:14px;color:var(--navy);background:#FBFCFF;outline:none;transition:.15s}
+  textarea{resize:vertical;min-height:150px}
+  textarea:focus,input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+  .hint{font-size:12px;color:#9AA2B5;margin-top:6px}
+
+  /* file drop zone */
+  .drop-zone{display:flex;align-items:center;gap:12px;border:2px dashed var(--line);
+    border-radius:var(--r-sm);padding:14px 16px;cursor:pointer;transition:.15s;margin-bottom:10px;
+    background:#FBFCFF}
+  .drop-zone:hover,.drop-zone.drag-over{border-color:var(--blue);background:rgba(37,99,235,.04)}
+  .drop-zone.has-file{border-color:var(--good);background:rgba(22,163,74,.04)}
+  .drop-zone.error-state{border-color:var(--low);background:rgba(239,68,68,.04)}
+  .drop-zone input[type=file]{display:none}
+  .dz-icon{font-size:20px;flex-shrink:0}
+  .dz-text{font-size:13px;color:var(--muted)}
+  .dz-text strong{display:block;color:var(--navy);font-weight:600;font-size:13.5px}
+  .dz-text span{font-size:11.5px}
+  .parse-spinner{display:none;width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--blue);
+    border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+  .drop-zone.parsing .parse-spinner{display:block}
+  .drop-zone.parsing .dz-icon{display:none}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{flex:1;text-align:center;padding:10px;border:1px solid var(--line);border-radius:11px;
+    font-size:13.5px;font-weight:600;color:#56607C;cursor:pointer;background:#FBFCFF;transition:.15s}
+  .tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .panel{display:none}.panel.on{display:block}
+
+  /* lead section */
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  @media(max-width:680px){.row3{grid-template-columns:1fr}}
+  .leadbox{margin-top:22px;border-top:1px dashed var(--line);padding-top:20px}
+  .leadbox .cap{font-size:13px;color:var(--muted);margin-bottom:14px}
+
+  /* scan button */
+  .go{margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:14px 26px;
+    font:inherit;font-weight:600;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:9px;transition:.15s}
+  .btn:hover:not(:disabled){background:var(--blue-dark)}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .btn .spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;
+    border-radius:50%;animation:spin .7s linear infinite;display:none}
+  .btn.loading .spin{display:inline-block}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .privacy{font-size:12px;color:#9AA2B5;max-width:38ch}
+
+  /* error toast */
+  .err-box{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;
+    padding:12px 16px;font-size:13.5px;margin-top:14px;display:none}
+  .err-box.show{display:block}
+
+  /* results */
+  #results{display:none;margin-bottom:60px}
+  #results.show{display:block;animation:rise .4s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .res-grid{display:grid;grid-template-columns:310px 1fr;gap:20px}
+  @media(max-width:820px){.res-grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+    box-shadow:var(--shadow);padding:24px}
+
+  /* score card */
+  .scorecard{text-align:center}
+  .ring{position:relative;width:170px;height:170px;margin:6px auto 14px}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .score-num{position:absolute;inset:0;display:grid;place-content:center;
+    font-size:46px;font-weight:800}
+  .ring .score-num small{display:block;font-size:12px;font-weight:600;color:var(--muted);
+    letter-spacing:1px;margin-top:-4px}
+  .verdict{font-family:'Poppins';font-weight:700;font-size:17px}
+  .verdict.amber{color:var(--mid)}.verdict.green{color:var(--good)}.verdict.red{color:var(--low)}
+  .scorecard > p{color:var(--muted);font-size:13.5px;margin-top:8px;text-align:center}
+
+  /* ATS breakdown */
+  .ats-breakdown{margin-top:20px;border-top:1px solid var(--line);padding-top:16px;text-align:left}
+  .breakdown-toggle{display:flex;align-items:center;justify-content:space-between;
+    cursor:pointer;font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;
+    letter-spacing:.5px;padding:4px 0;user-select:none}
+  .breakdown-toggle .arr{transition:.2s;display:inline-block}
+  .breakdown-toggle.open .arr{transform:rotate(90deg)}
+  .breakdown-body{display:none;margin-top:10px}
+  .breakdown-body.open{display:block}
+  .rule-row{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .rule-row:last-child{border:none}
+  .rule-icon{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+    font-size:10px;font-weight:800;margin-top:1px}
+  .rule-icon.pass{background:#E7F6EC;color:var(--good)}
+  .rule-icon.fail{background:#FCEBEC;color:var(--low)}
+  .rule-info{flex:1}
+  .rule-name{font-weight:600;color:var(--navy)}
+  .rule-note{color:var(--muted);margin-top:1px;font-size:11.5px}
+  .rule-pts{flex-shrink:0;font-weight:700;font-size:12px;color:var(--muted);white-space:nowrap}
+
+  /* keyword / analysis card */
+  .sec-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#3A4566;margin-bottom:12px}
+  .covbar{height:12px;border-radius:8px;background:#EDF0F8;overflow:hidden;margin:6px 0 4px}
+  .covbar>i{display:block;height:100%;width:0;border-radius:8px;
+    background:linear-gradient(90deg,var(--blue),var(--blue-dark));transition:width 1s ease .2s}
+  .covmeta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+  .chip{font-size:12.5px;font-weight:600;padding:6px 11px;border-radius:8px}
+  .chip.ok{background:#E7F6EC;color:#15803D}
+  .chip.no{background:#FCEBEC;color:#C0392B}
+  .chip-label{font-size:12px;font-weight:700;color:var(--muted);margin:14px 0 8px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:4px}
+  @media(max-width:600px){.cols{grid-template-columns:1fr}}
+  .li{display:flex;gap:9px;font-size:13.5px;margin-bottom:10px;align-items:flex-start}
+  .li .mk{flex:none;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;
+    font-size:11px;font-weight:800;margin-top:1px}
+  .li.good .mk{background:#E7F6EC;color:var(--good)}
+  .li.fix  .mk{background:#FEF3E2;color:#B45309}
+  .ai-verdict{font-size:14px;color:var(--muted);margin-bottom:16px;padding:12px 14px;
+    background:#F6F8FE;border-radius:10px;border:1px solid var(--line)}
+  .track-score-badge{display:inline-flex;align-items:center;gap:6px;background:var(--chip);
+    color:var(--blue);font-weight:700;font-size:13px;padding:5px 12px;border-radius:20px;margin-bottom:14px}
+
+  /* top tracks */
+  .trackcard{margin-top:20px}
+  .trackcard .head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+  .trackcard .head h3{font-size:18px;font-weight:700}
+  .trackcard .head .pill{font-size:11px;font-weight:700;color:var(--blue);background:var(--chip);
+    padding:4px 10px;border-radius:20px}
+  .trackcard .lede{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+  .track{display:flex;align-items:center;gap:16px;padding:15px 0;border-top:1px solid var(--line)}
+  .track .ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--chip);
+    display:grid;place-items:center;font-size:18px}
+  .track .body{flex:1;min-width:0}
+  .track .body .tt{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .track .body .nm{font-weight:600;font-size:15px}
+  .track .body .pc{font-family:'Poppins';font-weight:700;font-size:15px}
+  .tbar{height:8px;border-radius:6px;background:#EDF0F8;overflow:hidden;margin-top:8px}
+  .tbar>i{display:block;height:100%;width:0;border-radius:6px;transition:width 1s ease .3s}
+  .apply{flex:none;background:#fff;border:1px solid var(--blue);color:var(--blue);
+    font-weight:600;font-size:13px;padding:9px 16px;border-radius:10px;cursor:pointer}
+  .apply:hover{background:var(--blue);color:#fff}
+  .shared{margin-top:18px;font-size:12.5px;color:var(--muted);background:#F6F8FE;
+    border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+
+  /* Make Resume FAB */
+  .fab{position:fixed;bottom:28px;right:28px;z-index:100;
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;
+    border:none;border-radius:16px;padding:14px 20px;
+    font:600 14px 'Inter',sans-serif;cursor:pointer;
+    box-shadow:0 8px 24px -6px rgba(37,99,235,.55);
+    display:flex;align-items:center;gap:8px;transition:.2s}
+  .fab:hover{transform:translateY(-2px);box-shadow:0 12px 28px -6px rgba(37,99,235,.65)}
+  .fab span{font-size:17px}
+
+  /* api-missing banner */
+  .api-banner{background:#FEF9EC;border:1px solid #FCD34D;border-radius:12px;
+    padding:12px 16px;font-size:13px;color:#92400E;margin-bottom:20px;display:none}
+  .api-banner.show{display:block}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- ── Top bar ───────────────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="wrap">
+    <div><strong>99.99% UpTime Guarantee</strong><span class="dot">|</span>24x7 Support</div>
+    <div class="socials"><span>in</span><span>ig</span><span>x</span><span>wa</span></div>
+  </div>
+</div>
+
+<!-- ── Nav ──────────────────────────────────────────────────────────────── -->
+<nav class="bar">
+  <div class="wrap">
+    <div class="navcard">
+      <div class="brand">
+        <div class="logo">✓</div>
+        <div class="brand-name">TRIMBAKS</div>
+      </div>
+      <div class="navlinks">
+        <a href="#">Home</a><a href="#">Services</a>
+        <a href="#" class="active">Career</a>
+        <a href="#">About Us</a><a href="#">Blogs</a>
+      </div>
+      <a href="#" class="nav-cta">Get Support</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Careers · Resume ATS Check</div>
+    <h1>Is your resume ATS-ready?</h1>
+    <p>Run an instant compatibility scan and get recruiter-grade recommendations — then see which Trimbaks InfoTech internship tracks fit you best.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ── API key warning ──────────────────────────────────────────────────── -->
+  <div class="api-banner" id="apiBanner">
+    ⚠️ <strong>API key not configured.</strong> Add the key first <code>CEREBRAS_API_KEY</code> to <code>.env</code> and restart the server to enable AI analysis.
+  </div>
+
+  <!-- ── Input card ────────────────────────────────────────────────────────── -->
+  <section class="tool" id="inputCard">
+    <h2>Scan your resume</h2>
+    <div class="sub">Upload or paste your resume, choose what to match against, and we'll score it.</div>
+
+    <div class="grid2">
+
+      <!-- Left: resume input -->
+      <div>
+        <!-- File drop zone -->
+        <label class="fl">Your Resume</label>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept=".pdf,.docx">
+          <div class="parse-spinner" id="parseSpinner"></div>
+          <div class="dz-icon" id="dzIcon">📄</div>
+          <div class="dz-text">
+            <strong id="dzTitle">Drop PDF or Word file or click to browse</strong>
+            <span id="dzSub">PDF · DOCX · Max 8 MB · AI-extracted on upload</span>
+          </div>
+        </div>
+
+        <div style="text-align:center;font-size:12px;color:var(--muted);margin:6px 0">— or paste resume text below —</div>
+
+        <textarea id="resume" rows="8" placeholder="Paste your full resume text here… this box will show the summary of 50 words extracted"></textarea>
+        <div class="hint" id="parseHint"></div>
+      </div>
+
+      <!-- Right: mode + track/JD -->
+      <div>
+        <div class="tabs">
+          <div class="tab on" data-panel="track">Match to a Trimbak track</div>
+          <div class="tab"    data-panel="jd">Paste a job description</div>
+        </div>
+
+        <div class="panel on" id="panel-track">
+          <label class="fl" for="track">Internship track</label>
+          <select id="track">
+            <option>Cloud Computing</option>
+            <option>Cybersecurity</option>
+            <option>Network Administration</option>
+            <option>Server Administration</option>
+            <option>Desktop Support</option>
+            <option>Python</option>
+            <option>Data Science</option>
+            <option>IT Forensics</option>
+          </select>
+          <div class="hint">We score your resume against the skills this Trimbak track looks for  
+            <br>By doing so you permit your information such as uploaded resume to be shared with the Trimbaks internship team for relevant openings.</br>
+            <br></br>
+          After the scan scroll down to see what other tracks your profile suits best and apply just by a simple easy click
+          </div>
+        </div>
+
+        <div class="panel" id="panel-jd">
+          <label class="fl" for="jd">Job description</label>
+          <textarea id="jd" rows="7" placeholder="Paste any job description to score against it…"></textarea>
+          <div class="hint">ATS score is based on universal rules, not the JD. The JD is used for keyword and fit analysis only.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lead capture — used for EOI email and best-fit track Apply buttons -->
+    <div class="leadbox">
+      <div class="cap">Optional: fill in your details so the Trimbaks team can follow up, and so your profile is included when you apply for a recommended track below.</div>
+      <div class="row3">
+        <div><label class="fl">Full name</label><input id="leadName" placeholder="Your name"></div>
+        <div><label class="fl">Email</label><input id="leadEmail" type="email" placeholder="you@email.com"></div>
+        <div><label class="fl">College</label><input id="leadCollege" placeholder="Your college"></div>
+      </div>
+    </div>
+
+    <!-- Error box -->
+    <div class="err-box" id="errBox"></div>
+
+    <div class="go">
+      <button class="btn" id="runBtn">
+        <span class="spin"></span>
+        <span class="btxt">Check my score</span>
+      </button>
+      <span class="privacy">Scan your profile instantly. No data is stored or shared unless you choose to apply.</span>
+    </div>
+  </section>
+
+  <!-- ── Results ────────────────────────────────────────────────────────────── -->
+  <section id="results">
+
+    <div class="res-grid">
+
+      <!-- ATS Score card -->
+      <div class="card scorecard">
+        <div class="ring">
+          <svg width="170" height="170" viewBox="0 0 170 170">
+            <circle cx="85" cy="85" r="74" fill="none" stroke="#EDF0F8" stroke-width="14"/>
+            <circle id="ringArc" cx="85" cy="85" r="74" fill="none"
+              stroke="var(--mid)" stroke-width="14" stroke-linecap="round"
+              stroke-dasharray="465" stroke-dashoffset="465"/>
+          </svg>
+          <div class="score-num"><span id="scoreVal">0</span><small>ATS SCORE</small></div>
+        </div>
+        <div class="verdict" id="verdictLabel">—</div>
+        <p id="verdictSub"></p>
+
+        <!-- ATS Rules Breakdown -->
+        <div class="ats-breakdown">
+          <div class="breakdown-toggle" id="breakdownToggle">
+            <span>ATS Rule Breakdown</span>
+            <span class="arr">▶</span>
+          </div>
+          <div class="breakdown-body" id="breakdownBody"></div>
+        </div>
+      </div>
+
+      <!-- AI Analysis card -->
+      <div class="card" id="analysisCard">
+        <div class="sec-title">AI Analysis</div>
+        <div class="track-score-badge" id="trackScoreBadge">—</div>
+        <div class="ai-verdict" id="aiVerdict">Running analysis…</div>
+
+        <div class="sec-title" style="margin-top:4px">Keyword Coverage</div>
+        <div class="covbar"><i id="covFill"></i></div>
+        <div class="covmeta">
+          <span><b id="covPct">0%</b> of track keywords matched</span>
+          <span id="covTotal">0 keywords checked</span>
+        </div>
+
+        <div class="chip-label">Matched</div>
+        <div class="chips" id="matchedChips"></div>
+        <div class="chip-label">Missing — add if you have them</div>
+        <div class="chips" id="missingChips"></div>
+
+        <div class="cols">
+          <div>
+            <div class="chip-label">What's working</div>
+            <div id="workingList"></div>
+          </div>
+          <div>
+            <div class="chip-label">Fix these</div>
+            <div id="fixList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top tracks card -->
+    <div class="card trackcard" id="tracksCard">
+      <div class="head">
+        <h3>Your best-fit Trimbak tracks</h3>
+        <span class="pill">Based on your resume</span>
+      </div>
+      <div class="lede">These internship tracks line up most closely with your skills. Apply straight from here.</div>
+      <div id="tracksList"></div>
+      <div class="shared">Your profile analysis has been performed by AI (we are not liable for any kind of legal responsibility, this is just recommendations or advices you can make) and when you apply your detailed analysis will be sent out to the TrimbakInfo Tech Hiring team and they'll reach out if suitable.</div>
+    </div>
+
+  </section>
+</div>
+
+<!-- ── Make Resume FAB ───────────────────────────────────────────────────── -->
+<button class="fab" id="makeResumeBtn" title="Open the ResumeTailor builder">
+  <span>✏️</span> Make or Edit Resume? 
+</button>
+
+<footer>© 2026 Trimbaks InfoTech · Careers · Resume ATS Check</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════════════════════════════
+let parsedResume  = null;   // structured JSON from /api/parse-resume
+let rawText       = "";     // raw resume text for ATS formatting rule
+let activeMode    = "track"; // "track" | "jd"
+let isScanning    = false;
+let fileId        = null;   // server-side file store key for EOI attachment
+let fileName      = null;   // original upload filename
+let lastScanData  = null;   // { ats, ai } from last successful scan
+// Anti-spam: tracks which email+track combinations have had an EOI sent
+// this session (also persisted to localStorage across page reloads).
+const SENT_KEY    = "trimbaks:sent-eois";
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Helpers
+// ═══════════════════════════════════════════════════════════════════════════
+const $  = id => document.getElementById(id);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function showError(msg) {
+  const box = $("errBox");
+  box.textContent = msg;
+  box.classList.add("show");
+}
+function clearError() { $("errBox").classList.remove("show"); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  API config check
+// ═══════════════════════════════════════════════════════════════════════════
+async function checkApiKey() {
+  try {
+    const r = await fetch("/api/config");
+    const d = await r.json();
+    if (!d.ready) $("apiBanner").classList.add("show");
+  } catch { /* offline or server not running — ignore */ }
+}
+checkApiKey();
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Tab switching
+// ═══════════════════════════════════════════════════════════════════════════
+document.querySelectorAll(".tab").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(t => t.classList.remove("on"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("on"));
+    tab.classList.add("on");
+    $("panel-" + tab.dataset.panel).classList.add("on");
+    activeMode = tab.dataset.panel;
+    clearError();
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Textarea change — reset parsedResume so next scan re-parses
+// ═══════════════════════════════════════════════════════════════════════════
+$("resume").addEventListener("input", () => {
+  // Only reset if the user is manually typing (not the preview we injected)
+  if (!$("resume").dataset.injected) {
+    parsedResume = null;
+    rawText = $("resume").value;
+  }
+  $("resume").dataset.injected = "";
+  clearError();
+});
+
+// ═════════════════════════════════════════════════════════════════════════
+//  File upload — drop zone
+// ═══════════════════════════════════════════════════════════════════════════
+const dropZone = $("dropZone");
+const fileInput = $("fileInput");
+
+dropZone.addEventListener("click", e => {
+  if (e.target !== fileInput) fileInput.click();
+});
+dropZone.addEventListener("dragover",  e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", ()  => dropZone.classList.remove("drag-over"));
+dropZone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropZone.classList.remove("drag-over");
+  const file = e.dataTransfer.files?.[0];
+  if (file) handleFile(file);
+});
+fileInput.addEventListener("change", () => {
+  if (fileInput.files?.[0]) handleFile(fileInput.files[0]);
+});
+
+async function handleFile(file) {
+  const MAX_BYTES = 8 * 1024 * 1024;
+  const isPdf   = file.type === "application/pdf" || file.name.endsWith(".pdf");
+  const isDocx  = file.type.includes("openxmlformats-officedocument.wordprocessingml") || file.name.endsWith(".docx");
+
+  if (!isPdf && !isDocx) {
+    setDropState("error", "⚠️", "Unsupported file type", "Only PDF and DOCX files are accepted.");
+    return;
+  }
+  if (file.size > MAX_BYTES) {
+    setDropState("error", "⚠️", "File too large", "Maximum file size is 8 MB.");
+    return;
+  }
+
+  setDropState("parsing", "", file.name, "Parsing with AI…");
+  parsedResume = null;
+  rawText = "";
+  clearError();
+
+  try {
+    const ct = isPdf
+      ? "application/pdf"
+      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+    const resp = await fetch("/api/parse-resume", {
+      method: "POST",
+      headers: { "content-type": ct, "x-filename": file.name },
+      body: file,
+    });
+
+    const data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || "Parse failed.");
+
+    rawText  = data._extractedText || "";
+    fileId   = data._fileId   || null;
+    fileName = data._fileName || file.name;
+    delete data._extractedText;
+    delete data._fileId;
+    delete data._fileName;
+    parsedResume = data;
+
+    // Inject a human-readable preview so the user can see what was extracted
+    const preview = buildPreview(parsedResume);
+    $("resume").dataset.injected = "1";
+    $("resume").value = preview;
+    $("parseHint").textContent = "Resume extracted review above (compact version in 50 words shown ), then click Check my score.";
+
+    setDropState("success", file.name, `Extracted · ${(file.size / 1024).toFixed(0)} KB`);
+
+  } catch (err) {
+    console.error("[Parse]", err.message);
+    setDropState("error", "⚠️", "Upload failed", "Could not read file — try again or paste text below");
+    showError("Failed — please try again.");
+  }
+}
+
+function setDropState(state, icon, title, sub) {
+  dropZone.className = "drop-zone" + (state ? " " + state + "-state" : "");
+  if (state === "parsing") dropZone.classList.add("parsing");
+  $("dzIcon").textContent = icon;
+  $("dzTitle").textContent = title;
+  $("dzSub").textContent = sub;
+}
+
+function buildPreview(p) {
+  const lines = [];
+  const c = p.contact || {};
+  if (c.name)  lines.push(c.name);
+  const contactLine = [c.email, c.phone, c.location].filter(Boolean).join(" · ");
+  if (contactLine) lines.push(contactLine);
+  if (p.summary) lines.push("\n" + p.summary.slice(0, 300));
+  if (p.skills?.length) {
+    lines.push("\nSkills:");
+    p.skills.forEach(s => lines.push(`  ${s.label}: ${s.items}`));
+  }
+  if (p.experience?.length) {
+    lines.push(`\nExperience: ${p.experience.length} role(s) extracted`);
+    p.experience.slice(0,2).forEach(e => {
+      if (e.role || e.org) lines.push(`  • ${[e.role, e.org].filter(Boolean).join(" @ ")}`);
+    });
+  }
+  if (p.education?.length) {
+    lines.push(`\nEducation:`);
+    p.education.forEach(e => {
+      if (e.degree || e.school) lines.push(`  • ${[e.degree, e.school].filter(Boolean).join(", ")}`);
+    });
+  }
+  return lines.join("\n");
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  ATS Breakdown accordion
+// ═══════════════════════════════════════════════════════════════════════════
+$("breakdownToggle").addEventListener("click", () => {
+  const body    = $("breakdownBody");
+  const toggle  = $("breakdownToggle");
+  const isOpen  = body.classList.contains("open");
+  body.classList.toggle("open", !isOpen);
+  toggle.classList.toggle("open", !isOpen);
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Run scan
+// ═══════════════════════════════════════════════════════════════════════════
+$("runBtn").addEventListener("click", runScan);
+
+async function runScan() {
+  if (isScanning) return;
+  clearError();
+
+  const resumeText = $("resume").value.trim();
+
+  // Validate: need either a parsed file or enough pasted text
+  if (!parsedResume && resumeText.length < 50) {
+    showError("Please upload a resume file or paste at least 50 characters of resume text.");
+    return;
+  }
+  // Validate JD mode
+  if (activeMode === "jd") {
+    const jd = $("jd").value.trim();
+    if (jd.length < 20) {
+      showError("Please paste a job description (at least 20 characters).");
+      return;
+    }
+  }
+
+  isScanning = true;
+  setBtnState("loading", "Scanning…");
+
+  try {
+    // Step 1: if no parsed resume yet, parse the pasted text first
+    if (!parsedResume) {
+      setBtnState("loading", "Parsing resume…");
+      const resp = await fetch("/api/parse-resume", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ text: resumeText }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || data.error) throw new Error(data.error || "Failed to parse resume.");
+      rawText = data._extractedText || resumeText;
+      delete data._extractedText;
+      parsedResume = data;
+    }
+
+    // Step 2: run the ATS check (rule-based score + AI analysis — ONE API call)
+    setBtnState("loading", "Analysing…");
+    const body = {
+      rawText:       (rawText || resumeText).slice(0, 8000),
+      resumeParsed:  parsedResume,
+      mode:          activeMode,
+      track:         activeMode === "track" ? $("track").value : null,
+      jobDescription: activeMode === "jd"   ? $("jd").value   : null,
+    };
+
+    const resp = await fetch("/api/ats-check", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || "ATS check failed.");
+
+    lastScanData = data;
+    renderResults(data);
+    $("results").classList.add("show");
+    $("results").scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Auto-send EOI when mode=track AND a file was uploaded (not text-paste)
+    if (activeMode === "track" && fileId) {
+      const track = $("track").value;
+      const name  = $("leadName").value.trim();
+      if (name) {
+        // Fire and forget — don't block the UI for the email
+        sendEoi(track, data.ai.trackMatchScore, data).catch(err => {
+          console.error("[EOI auto]", err.message);
+        });
+      }
+    }
+
+  } catch (err) {
+    console.error("[Scan]", err.message);
+    showError("Failed — please try again.");
+    parsedResume = null;
+    lastScanData = null;
+  } finally {
+    isScanning = false;
+    setBtnState("idle", "Re-scan");
+  }
+}
+
+function setBtnState(state, text) {
+  const btn = $("runBtn");
+  btn.classList.toggle("loading", state === "loading");
+  btn.disabled = state === "loading";
+  btn.querySelector(".btxt").textContent = text;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Render results
+// ═══════════════════════════════════════════════════════════════════════════
+function renderResults({ ats, ai }) {
+  renderAtsScore(ats);
+  renderAiAnalysis(ai);
+  renderTopTracks(ai.topTracks || []);
+}
+
+function renderAtsScore({ score, breakdown }) {
+  const C = 465; // circumference at r=74
+  const arc = $("ringArc");
+
+  // Determine colour + verdict
+  let colour, verdictText, verdictSub, cls;
+  if      (score >= 85) { colour = "var(--good)"; cls = "green"; verdictText = "ATS Excellent";    verdictSub = "Your resume is well-optimised. A few more tweaks could make it perfect."; }
+  else if (score >= 70) { colour = "var(--mid)";  cls = "amber"; verdictText = "Needs a Few Fixes"; verdictSub = "Solid base. Targeted edits will lift this above the recruiter cut-off."; }
+  else if (score >= 55) { colour = "var(--low)";  cls = "red";   verdictText = "Significant Gaps";  verdictSub = "Several ATS requirements are missing. Use the breakdown below to fix them."; }
+  else                  { colour = "var(--low)";  cls = "red";   verdictText = "Not ATS-Ready";     verdictSub = "Key sections and formatting are missing. See the breakdown below."; }
+
+  arc.style.stroke = colour;
+  arc.style.transition = "stroke-dashoffset 1.1s ease .15s";
+  arc.style.strokeDashoffset = C - (C * score / 100);
+
+  // Animate counter
+  let n = 0;
+  const t = setInterval(() => {
+    n = Math.min(n + 2, score);
+    $("scoreVal").textContent = n;
+    if (n >= score) clearInterval(t);
+  }, 18);
+
+  const vl = $("verdictLabel");
+  vl.textContent = verdictText;
+  vl.className = `verdict ${cls}`;
+  $("verdictSub").textContent = verdictSub;
+
+  // Breakdown rows
+  const body = $("breakdownBody");
+  body.innerHTML = breakdown.map(r => `
+    <div class="rule-row">
+      <div class="rule-icon ${r.passed ? "pass" : "fail"}">${r.passed ? "✓" : "✕"}</div>
+      <div class="rule-info">
+        <div class="rule-name">${esc(r.rule)}</div>
+        <div class="rule-note">${esc(r.note)}</div>
+      </div>
+      <div class="rule-pts">${r.points}/${r.maxPoints}</div>
+    </div>
+  `).join("");
+}
+
+function renderAiAnalysis({ trackMatchScore, verdict, keywordCoverage, whatsWorking, fixThese }) {
+  const kc = keywordCoverage || { matched: [], missing: [] };
+  const total = kc.matched.length + kc.missing.length;
+  const pct   = total > 0 ? Math.round((kc.matched.length / total) * 100) : 0;
+
+  // Track match badge
+  const badge = $("trackScoreBadge");
+  badge.textContent = `${activeMode === "track" ? $("track").value : "JD"} match: ${trackMatchScore}%`;
+
+  // Verdict
+  $("aiVerdict").textContent = verdict || "";
+
+  // Coverage bar
+  setTimeout(() => { $("covFill").style.width = pct + "%"; }, 200);
+  $("covPct").textContent = pct + "%";
+  $("covTotal").textContent = total + " keyword" + (total !== 1 ? "s" : "") + " checked";
+
+  // Chips
+  $("matchedChips").innerHTML = kc.matched.length
+    ? kc.matched.map(k => `<span class="chip ok">${esc(k)}</span>`).join("")
+    : `<span style="font-size:13px;color:var(--muted)">None matched</span>`;
+
+  $("missingChips").innerHTML = kc.missing.length
+    ? kc.missing.map(k => `<span class="chip no">${esc(k)}</span>`).join("")
+    : `<span style="font-size:13px;color:var(--good)">All key skills covered ✓</span>`;
+
+  // What's working
+  $("workingList").innerHTML = (whatsWorking || []).map(w =>
+    `<div class="li good"><span class="mk">✓</span><span>${esc(w)}</span></div>`
+  ).join("") || `<div style="font-size:13px;color:var(--muted)">No strengths identified.</div>`;
+
+  // Fix these
+  $("fixList").innerHTML = (fixThese || []).map(f =>
+    `<div class="li fix"><span class="mk">!</span><span>${esc(f)}</span></div>`
+  ).join("") || `<div style="font-size:13px;color:var(--good)">Nothing critical to fix ✓</div>`;
+}
+
+function renderTopTracks(topTracks) {
+  if (!topTracks.length) {
+    $("tracksCard").style.display = "none";
+    return;
+  }
+  $("tracksCard").style.display = "";
+
+  $("tracksList").innerHTML = topTracks.map(t => {
+    const score = Math.max(0, Math.min(100, Number(t.score)));
+    const col   = score >= 75 ? "var(--good)" : score >= 55 ? "var(--mid)" : "var(--low)";
+    return `
+      <div class="track">
+        <div class="ic">${esc(t.icon || "💼")}</div>
+        <div class="body">
+          <div class="tt">
+            <span class="nm">${esc(t.name)}</span>
+            <span class="pc" style="color:${col}">${score}%</span>
+          </div>
+          <div class="tbar"><i style="background:${col}" data-w="${score}"></i></div>
+        </div>
+        <button class="apply" data-action="apply-eoi" data-track="${esc(t.name)}" data-score="${score}">Apply</button>
+      </div>`;
+  }).join("");
+
+  // Animate track bars after a short delay
+  setTimeout(() => {
+    document.querySelectorAll(".tbar > i[data-w]").forEach(el => {
+      el.style.width = el.dataset.w + "%";
+    });
+  }, 300);
+}
+
+// ── Apply button event delegation ────────────────────────────────────────────
+// Handles clicks on Apply buttons inside the best-fit tracks card.
+// Each button fires an EOI email for its specific track.
+$("tracksList").addEventListener("click", async (e) => {
+  const btn = e.target.closest("[data-action='apply-eoi']");
+  if (!btn || btn.disabled) return;
+
+  const track = btn.dataset.track;
+  const score = Number(btn.dataset.score || 0);
+  const name  = $("leadName").value.trim();
+
+  if (!fileId) {
+    showBanner("Upload your resume first before applying.", "warning");
+    return;
+  }
+  if (!name) {
+    showBanner("Please fill in your full name in the form above first.", "warning");
+    return;
+  }
+
+  // Disable the button immediately to prevent double-clicks
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+
+  try {
+    await sendEoi(track, score, lastScanData);
+    btn.textContent = "Sent";
+    btn.style.cssText = "background:#E7F6EC;color:#16A34A;border-color:#16A34A;cursor:default";
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = "Apply";
+    console.error("[EOI apply]", err.message);
+    showBanner("Failed to send — please try again.", "error");
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  EOI helpers — anti-spam + email sending
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Returns true if this email+track combination has already had an EOI sent.
+function hasSentEoi(email, track) {
+  try {
+    const sent = JSON.parse(localStorage.getItem(SENT_KEY) || "{}");
+    return Boolean(sent[`${(email || "anon").toLowerCase()}|${track}`]);
+  } catch { return false; }
+}
+
+// Mark an email+track combination as sent (persists to localStorage).
+function markEoiSent(email, track) {
+  try {
+    const sent = JSON.parse(localStorage.getItem(SENT_KEY) || "{}");
+    sent[`${(email || "anon").toLowerCase()}|${track}`] = Date.now();
+    localStorage.setItem(SENT_KEY, JSON.stringify(sent));
+  } catch { /* non-fatal */ }
+}
+
+// Send an EOI email for the given track via the server.
+// Returns a resolved promise on success, throws on failure.
+async function sendEoi(track, matchScore, scanData) {
+  if (!fileId) throw new Error("No uploaded file — paste-only scans cannot send EOIs.");
+
+  const data = scanData || lastScanData;
+  if (!data)  throw new Error("No scan data available.");
+
+  const name    = $("leadName").value.trim();
+  const email   = $("leadEmail").value.trim();
+  const college = $("leadCollege").value.trim();
+
+  if (!name) throw new Error("Please fill in your full name first.");
+
+  const dedupeKey = (email || name).toLowerCase() + "|" + track;
+
+  // Client-side spam gate — one EOI per email+track per browser
+  if (hasSentEoi(email || name, track)) {
+    showBanner("You've already submitted an EOI for " + track + ".", "info");
+    return; // not an error, just a no-op
+  }
+
+  const resp = await fetch("/api/send-eoi", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      track,
+      matchScore,
+      name,
+      email,
+      college,
+      positives:       data.ai.whatsWorking       || [],
+      negatives:       data.ai.fixThese           || [],
+      keywordsCovered: data.ai.keywordCoverage?.matched || [],
+      keywordsMissing: data.ai.keywordCoverage?.missing || [],
+      education:       parsedResume?.education    || [],
+      fileId,
+      fileName,
+    }),
+  });
+
+  const result = await resp.json();
+  if (!resp.ok || result.error) throw new Error(result.error || "Email send failed.");
+
+  // Mark as sent ONLY after confirmed success
+  markEoiSent(email || name, track);
+  showBanner(" EOI for " + track + " sent to TrimbakInfoTech!", "success");
+}
+
+// Show a non-blocking toast banner at the bottom of the screen.
+function showBanner(msg, type = "info") {
+  const cols = { success: "#16A34A", error: "#EF4444", warning: "#F59E0B", info: "#2563EB" };
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = [
+    "position:fixed;bottom:84px;left:50%;transform:translateX(-50%);",
+    "background:" + (cols[type] || cols.info) + ";color:#fff;",
+    "padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;",
+    "box-shadow:0 8px 24px rgba(0,0,0,.18);z-index:9999;",
+    "max-width:90vw;text-align:center;cursor:pointer;",
+    "animation:rise .3s ease;"
+  ].join("");
+  document.body.appendChild(el);
+  const timer = setTimeout(() => el.remove(), 5000);
+  el.addEventListener("click", () => { clearTimeout(timer); el.remove(); });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Make Resume button
+// ═══════════════════════════════════════════════════════════════════════════
+$("makeResumeBtn").addEventListener("click", () => {
+  window.open("/index.html", "_blank");
+});
+</script>
+</body>
+</html>

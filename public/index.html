@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Resume Builder · Trimbaks InfoTech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand-area">
+        <div class="brand-logo">✓</div>
+        <div class="brand-text">
+          <span class="brand-name">TRIMBAKS</span>
+          <span class="brand-sub">Resume Builder</span>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="downloadBtn" class="primary-btn">⬇ Download PDF</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+
+      <!-- Left panel -->
+      <aside class="left-panel">
+
+        <!-- 1. Your Resume (PDF upload only) -->
+        <div class="panel-block">
+          <div class="block-header collapsible-trigger" id="uploadToggle">
+            <h2>Your Resume</h2>
+            <span class="chevron open" id="uploadChevron">›</span>
+          </div>
+          <div class="collapsible-body open" id="uploadBody">
+            <div class="block-body">
+              <label class="drop-zone" id="dropZone">
+                <input id="importFile" type="file" accept=".pdf">
+                <div class="drop-zone-inner" id="dropZoneInner">
+                  <span class="drop-icon" id="dropIcon">📄</span>
+                  <span class="drop-label" id="dropLabel">Drop or Browse PDF</span>
+                  <span class="drop-hint">PDF only · Max 8 MB · AI-parsed instantly</span>
+                </div>
+                <div class="drop-zone-progress" id="dropProgress">
+                  <div class="drop-progress-bar" id="dropProgressBar"></div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Analysis (Job Match + AI findings) -->
+        <div class="panel-block" id="analysisBlock">
+          <div class="block-header collapsible-trigger" id="analysisToggle">
+            <h2>Analysis</h2>
+            <button id="clearFeedbackBtn" class="text-btn">Clear</button>
+          </div>
+          <div class="collapsible-body open" id="analysisBody">
+            <div id="jobMatchDisplay" class="job-match-area">
+              <div class="match-empty">Upload your resume and paste a job description to see your Job Match %.</div>
+            </div>
+            <div id="feedbackList" class="feedback-list"></div>
+          </div>
+        </div>
+
+        <!-- 3. Edit Resume -->
+        <div class="panel-block">
+          <div class="block-header collapsible-trigger" id="editorToggle">
+            <h2>Edit Resume</h2>
+            <span class="chevron" id="editorChevron">›</span>
+          </div>
+          <div class="collapsible-body" id="editorBody">
+
+            <div class="editor-sub-header"><span>Contact</span></div>
+            <div class="field-grid">
+              <label class="field-label">Name<input id="nameInput" autocomplete="name"></label>
+              <label class="field-label">Email<input id="emailInput" autocomplete="email"></label>
+              <label class="field-label">Phone<input id="phoneInput" autocomplete="tel"></label>
+              <label class="field-label">Location<input id="locationInput"></label>
+              <label class="field-label">LinkedIn<input id="linkedinInput" placeholder="linkedin.com/in/yourname"></label>
+              <label class="field-label">GitHub<input id="githubInput" placeholder="github.com/yourname"></label>
+              <label class="field-label wide">Website<input id="websiteInput" placeholder="your-site.com"></label>
+            </div>
+
+            <div class="editor-sub-header"><span>Sections</span></div>
+            <div id="sectionList" class="section-list"></div>
+
+            <div class="editor-footer-actions">
+              <button id="addExperienceBtn" class="ghost-btn full">+ Add Experience</button>
+              <button id="addSectionBtn"    class="ghost-btn full">+ Add Section</button>
+              <div class="options-row">
+                <label class="check-label"><input id="showLinks" type="checkbox" checked> Show links</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </aside>
+
+      <!-- Right panel -->
+      <div class="right-panel">
+
+        <!-- Tailor to a Job pane -->
+        <div class="job-pane">
+          <div class="job-pane-header collapsible-trigger" id="jobPaneToggle">
+            <h2>Tailor to a Job</h2>
+            <div class="job-pane-actions">
+              <button id="applyFeedbackBtn" class="ghost-btn" disabled>Apply Selected</button>
+              <button id="aiTailorBtn"      class="primary-btn" disabled>Tailor with AI</button>
+            </div>
+            <span class="chevron open" id="jobPaneChevron">›</span>
+          </div>
+          <div class="collapsible-body open" id="jobPaneBody">
+            <div class="job-pane-body">
+              <textarea id="jobDescription" rows="6"
+                placeholder="Paste the full job description here: responsibilities, required skills, company context. Recommendations will be based on this."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume preview paper -->
+        <main class="preview-pane">
+          <article id="resumePreview" class="resume-paper"></article>
+          <div class="page-count-wrapper">
+            <div id="pageCountDisplay" class="page-count" aria-live="polite"></div>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Toast notifications -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
