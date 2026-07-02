@@ -1,3 +1,6 @@
+IGNORE IGNORE security.md
+
+
 Start with istalling node packages using 'npm install'
 then hit 'node server.mjs'
 Add the keys in env.example
